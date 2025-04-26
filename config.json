@@ -1,0 +1,11 @@
+{
+    "YES": "y",
+    "NO": "n",
+    "YES_NO": "yn",
+    "WO_FILE": "wo_list.csv",
+    "YN": "(y/n)",
+    "XML_FILES_FOLDER": "XML_Files",
+    "XML_DESTINATION_URL": "\\\\testurl.intranet.testuser.com\\FABRICACION\\DXFS",
+    "XML_OLD_FOLDER": "XML_Old",
+    "DEFAULT_OUTPUT_FILENAME": "output.xml"
+}
