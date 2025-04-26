@@ -21,7 +21,7 @@ def write_orders_to_file():
     '''Funkce pro manuální zápis WO do listu a souboru'''
     orders = []
     while True:
-        write_orders = input(f'Přejete si do souboru "wo_list" rovnou zapsat požadované zakázky? {YN} (prázdná hodnota přeskočí zápis).: ')
+        write_orders = input(f'Přejete si do souboru "wo_list" zapsat požadované zakázky? {YN} (prázdná hodnota přeskočí zápis).: ')
         if not write_orders or write_orders.lower() in YES_NO:
             break
         else:
@@ -202,6 +202,9 @@ def main():
             wo_list = write_orders_to_file()
             if not wo_list:
                 raise FileNotFoundError
+        elif WO_FILE not in os.listdir():
+            print(f'Soubor "{WO_FILE}" nebyl vytvořen!')
+            raise FileNotFoundError
 
         wo_list_str = "\n".join(list(map(str, sorted(wo_list))))
         print(f"\nnalezené WO:\n{wo_list_str}\n")
