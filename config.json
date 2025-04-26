@@ -7,5 +7,6 @@
     "XML_FILES_FOLDER": "XML_Files",
     "XML_DESTINATION_URL": "\\\\testurl.intranet.testuser.com\\FABRICACION\\DXFS",
     "XML_OLD_FOLDER": "XML_Old",
-    "DEFAULT_OUTPUT_FILENAME": "output.xml"
+    "DEFAULT_OUTPUT_FILENAME": "output.xml",
+    "DEFAULT_OUTPUT_FOLDER": "XML_Output"
 }

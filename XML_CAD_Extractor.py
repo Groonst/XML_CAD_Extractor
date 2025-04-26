@@ -15,7 +15,7 @@ with open("config.json") as config_file:
     XML_OLD_FOLDER = config["XML_OLD_FOLDER"]
     XML_DESTINATION_URL = config["XML_DESTINATION_URL"]
     DEFAULT_OUTPUT_FILENAME = config["DEFAULT_OUTPUT_FILENAME"]
-
+    DEFAULT_OUTPUT_FOLDER = config["DEFAULT_OUTPUT_FOLDER"]
 
 def write_orders_to_file():
     '''Funkce pro manuální zápis WO do listu a souboru'''
@@ -99,7 +99,7 @@ def extract_xml_data(wo_list, xml_list):
     xml_data = {}
     not_found = []
     for file in xml_list:
-        xml_tree = etree.parse(f"XML_Files/{file}")
+        xml_tree = etree.parse(f"{XML_FILES_FOLDER}/{file}")
         xml_root = xml_tree.getroot()
         for production_order_element in xml_root.xpath('//ProductionOrder'):
             wo_num = production_order_element.get('OrderNo')
@@ -137,9 +137,12 @@ def write_new_import_file(xml_data):
     '''Funkce pro zápis dat do nového XML souboru'''
     def choose_filename():
         '''Vnořená funkce pro zjištění dostupnosti názvu'''
+        if DEFAULT_OUTPUT_FOLDER not in os.listdir():
+            os.mkdir(DEFAULT_OUTPUT_FOLDER)
+        folder = DEFAULT_OUTPUT_FOLDER
         filename = DEFAULT_OUTPUT_FILENAME
         replace = NO
-        while filename in os.listdir() and replace == NO:
+        while filename in os.listdir(DEFAULT_OUTPUT_FOLDER) and replace == NO:
             while True:
                 overwrite = input(f'Soubor "{filename}" již existuje, chcete jej přepsat? {YN} (prázdná hodnota a "n" navrhne změnu jména) : ')
                 if not overwrite or overwrite.lower() in YES_NO:
@@ -150,7 +153,7 @@ def write_new_import_file(xml_data):
                 filename = input("Vložte nový název výstupního souboru (bez přípony): ") + ".xml"
             else:
                 replace = YES
-        return filename
+        return (folder, filename)
 
     new_root = etree.Element("PPSImport", Version="1.1")
     new_parts = etree.SubElement(new_root, "Parts")
@@ -164,9 +167,9 @@ def write_new_import_file(xml_data):
     
     xml_tree = etree.ElementTree(new_root)
     while True:
-        filename = choose_filename()
+        folder, filename = choose_filename()
         try:
-            xml_tree.write(filename, encoding="utf-8", xml_declaration=True, pretty_print=True)
+            xml_tree.write(f"{folder}/{filename}", encoding="utf-8", xml_declaration=True, pretty_print=True)
             break
         except OSError:
             print("Nevyhovující název souboru!")
@@ -180,12 +183,12 @@ def move_xml_files(xml_list):
             break
         else:
             print("Neplatná hodnota.")
-    if move_files != NO:
+    if move_files.lower() != NO:
         if XML_OLD_FOLDER not in os.listdir():
             print(f'Složka {XML_OLD_FOLDER} nebyla nalezena a bude vytvořena.')
             os.mkdir(XML_OLD_FOLDER)
         for file in xml_list:
-            os.replace(f'XML_Files\{file}',f'XML_Old\{file}')
+            os.replace(f'{XML_FILES_FOLDER}\{file}',f'{XML_OLD_FOLDER}\{file}')
         print("všechny soubory byly přesunuty.")
     else:
         print("Soubory nebudou přesunuty.")
@@ -209,7 +212,6 @@ def main():
             raise FileNotFoundError
         xml_list_str = "\n".join(xml_list)
         print(f"nalezené XML:\n{xml_list_str}\n")
-
         xml_data, not_found = extract_xml_data(wo_list, xml_list) #Pokus o extrakci dat z XML
         if not xml_data:
             print("XML soubory neobsahují správná data!")
