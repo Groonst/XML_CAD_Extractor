@@ -2,20 +2,41 @@ import os
 from lxml import etree
 import json
 
+def get_config():
+    if "config.json" not in os.listdir():
+        json_data = {
+            "YES": "y",
+            "NO": "n",
+            "YES_NO": "yn",
+            "WO_FILE": "wo_list.csv",
+            "YN": "(y/n)",
+            "XML_FILES_FOLDER": "XML_Files",
+            "XML_DESTINATION_URL": "\\\\testurl.intranet.testuser.com\\FABRICACION\\DXFS",
+            "XML_OLD_FOLDER": "XML_Old",
+            "DEFAULT_OUTPUT_FILENAME": "output.xml",
+            "DEFAULT_OUTPUT_FOLDER": "XML_Output"
+        }
+        
+        with open("config.json", "w", encoding='utf-8') as config_file:
+            json.dump(json_data, config_file, ensure_ascii=False, indent=4)
+        return json_data
+    
+    else:
+        with open("config.json") as config_file:
+            return json.load(config_file)
+        
+config = get_config()
 
-with open("config.json") as config_file:
-    config = json.load(config_file)
-
-    YES = config["YES"]
-    NO = config["NO"]
-    YES_NO = config["YES_NO"]
-    WO_FILE = config["WO_FILE"]
-    YN = config["YN"]
-    XML_FILES_FOLDER = config["XML_FILES_FOLDER"]
-    XML_OLD_FOLDER = config["XML_OLD_FOLDER"]
-    XML_DESTINATION_URL = config["XML_DESTINATION_URL"]
-    DEFAULT_OUTPUT_FILENAME = config["DEFAULT_OUTPUT_FILENAME"]
-    DEFAULT_OUTPUT_FOLDER = config["DEFAULT_OUTPUT_FOLDER"]
+YES = config["YES"]
+NO = config["NO"]
+YES_NO = config["YES_NO"]
+WO_FILE = config["WO_FILE"]
+YN = config["YN"]
+XML_FILES_FOLDER = config["XML_FILES_FOLDER"]
+XML_OLD_FOLDER = config["XML_OLD_FOLDER"]
+XML_DESTINATION_URL = config["XML_DESTINATION_URL"]
+DEFAULT_OUTPUT_FILENAME = config["DEFAULT_OUTPUT_FILENAME"]
+DEFAULT_OUTPUT_FOLDER = config["DEFAULT_OUTPUT_FOLDER"]
 
 def write_orders_to_file():
     '''Funkce pro manuální zápis WO do listu a souboru'''
